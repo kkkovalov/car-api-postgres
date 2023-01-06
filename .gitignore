@@ -1,0 +1,8 @@
+#General
+.DS_Store
+
+#NPM modules
+node_modules
+
+#Enviroment variables
+*.env
