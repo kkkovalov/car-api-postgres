@@ -1,0 +1,19 @@
+{
+  "name": "car-api-postgres",
+  "version": "1.0.0",
+  "description": "European Cars API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kkkovalov/car-api-postgres.git"
+  },
+  "author": "Vladyslav Kovalov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kkkovalov/car-api-postgres/issues"
+  },
+  "homepage": "https://github.com/kkkovalov/car-api-postgres#readme"
+}
