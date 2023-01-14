@@ -21,20 +21,37 @@ client.connect((err) => {
     else console.log('Database connected');
 });
 
+
 // index.js constants
 const HOST = 'localhost';
 const PORT = 3000;
-
 
 
 app.listen(PORT, HOST, () => {
     log(`Server is listening on http://${HOST}:${PORT}/ \n\t Ready for connections!`);
 });
 
-app.get('/', (rq, rs) => {
-    client.query('SELECT car_model, price FROM cars;', (err, res) => {
-        const result = res;
-        rs.send(res);
+const convertQueryToSql = (columnField, valueField) => {
+    return ` ${columnField} LIKE '${valueField}%'`;
+};
+
+const getQueryParams = (queryJson) => {
+    let sqlQueryParams = '';
+    queryParams = Object.getOwnPropertyNames(queryJson);
+    queryValues = Object.values(queryJson);
+    for(i = 0; i < queryParams.length; i++){
+        if(i == 0) sqlQueryParams = convertQueryToSql(queryParams[i], queryValues[i]);
+        else sqlQueryParams += ' AND' + convertQueryToSql(queryParams[i], queryValues[i]);
+    }
+    return sqlQueryParams;
+};
+
+app.get('/cars', (rq, rs) => {
+    const qr = `SELECT * FROM cars WHERE` + getQueryParams(rq.query) + ';'
+    console.log(`query --->  ${qr}`);
+    client.query(qr, (err, res) => {
+        if (err) throw err;
+        rs.send(res.rows);
     });
 });
 
