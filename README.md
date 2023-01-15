@@ -8,5 +8,9 @@ Default server is running on http://localhost:3000/. To alter HOSTNAME or PORT, 
 ** How to use Cars API:
 All request assume you always start with an endpoint of http://localhost:3000/;
 
-> /cars
+> GET /cars
 Request will return all available data on cars in JSON object.
+
+
+> DELETE /cars/:id 
+***Deletes item with id specified in request from the table cars.

@@ -31,6 +31,8 @@ app.listen(PORT, HOST, () => {
     log(`Server is listening on http://${HOST}:${PORT}/ \n\t Ready for connections!`);
 });
 
+// Functions for requests;
+
 const convertQueryToSql = (columnField, valueField) => {
     return ` ${columnField} LIKE '${valueField}%'`;
 };
@@ -46,12 +48,32 @@ const getQueryParams = (queryJson) => {
     return sqlQueryParams;
 };
 
+const isDeleteValid = (id) => {
+    const qr = `SELECT * FROM cars WHERE id = ${id};`;
+    client.query(qr, (err, res) => {
+        if (err) throw err;
+        if(res.rowCount == 1) return true;
+        else return false;
+    });
+};
+
 app.get('/cars', (rq, rs) => {
     const qr = `SELECT * FROM cars WHERE` + getQueryParams(rq.query) + ';'
-    console.log(`query --->  ${qr}`);
+    console.log('query --->  ', qr);
     client.query(qr, (err, res) => {
         if (err) throw err;
         rs.send(res.rows);
+    });
+});
+
+//Delete request by ID of the car
+app.delete('/cars/:id', (rq, rs) => {
+    const qr = `DELETE FROM cars WHERE id = '${rq.params.id}';`
+    console.log('query --->  ', qr);
+    client.query(qr, (err, res) => {
+        if (err) throw err;
+        if(res.rowCount == 1) rs.send(`Successfully deleted id = ${rq.params.id}.`);
+        else rs.send('Invalid ID, try again.');
     });
 });
 
