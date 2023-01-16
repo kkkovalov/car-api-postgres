@@ -4,6 +4,7 @@ const _ = require('lodash');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const { Client } = require('pg');
+const { isNumber } = require('lodash');
 
 
 // Express App initialization
@@ -63,6 +64,23 @@ function updateSqlRequest(patchBody) {
     return returnQuery;
 };
 
+function putSqlRequest(putBody) {
+    const reqValue = Object.values(putBody);
+    const reqProps = Object.getOwnPropertyNames(putBody);
+    let strValues = `'${reqValue[0]}'`;
+    let strProps = `${reqProps[0]}`;
+    const regExpNum = /[0-9]/g;
+    const regExpStr = /[a-zA-z]/g;
+
+    for(i = 1; i< reqValue.length; i++){
+        if(regExpNum.test(reqValue[i]) && !regExpStr.test(reqValue[i])) {
+            strValues += `, ${Number(reqValue[i])}`;
+        } else strValues += `, '${reqValue[i]}'`;
+        strProps += `, ${reqProps[i]}`;
+    };
+    return `INSERT INTO cars (${strProps}) VALUES (${strValues});`
+};
+
 // GET request for all cars, optional WHERE statement
 app.get('/cars', (rq, rs) => {
     const qr = `SELECT * FROM cars WHERE` + getQueryParams(rq.query) + ';'
@@ -82,7 +100,7 @@ app.get('/cars/:id', (rq, rs) => {
     });
 });
 
-//Delete request by ID of the car
+// DELETE request by ID of the car
 app.delete('/cars/:id', (rq, rs) => {
     const qr = `DELETE FROM cars WHERE id = '${rq.params.id}';`
     console.log('query --->  ', qr);
@@ -93,13 +111,23 @@ app.delete('/cars/:id', (rq, rs) => {
     });
 });
 
-//Update request by ID of the car
+// PATCH request by ID of the car
 app.patch('/cars/:id', bodyParserUrl, (rq, rs) => {
     const qr = `UPDATE cars SET ` + updateSqlRequest(rq.body) + ` WHERE id = ${rq.params.id};`;
     log(qr);
     client.query(qr, (err, res) => {
         if (err) throw err;
         rs.send(res);
+    });
+});
+
+// PUT request to add a new car
+app.put('/cars', bodyParserUrl, (rq, rs) => {
+    const qr = putSqlRequest(rq.body);
+    client.query(qr, (err, res) => {
+        if(err) throw err;
+        console.log(res.rows);
+        rs.send('Successfully added new car entry');
     });
 });
 

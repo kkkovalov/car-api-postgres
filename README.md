@@ -23,4 +23,8 @@ All request assume you always start with an endpoint of http://localhost:3000/;
 > PATCH /cars/:id
 
     PATCH request will update the information specified under body (url-encoded).
-    
+
+> PUT /cars
+
+    PUT request will add a new entry, based on information supplied by user in body, no restrictions.
+
