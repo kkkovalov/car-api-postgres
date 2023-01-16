@@ -12,7 +12,15 @@ All request assume you always start with an endpoint of http://localhost:3000/;
 
     Request will return all available data on cars in JSON object.
 
+> GET /cars/:id
+
+    GET request by specifying id will return JSON object, containing information about the car.
 
 > DELETE /cars/:id 
 
     Deletes item with id specified in request from the table cars.
+
+> PATCH /cars/:id
+
+    PATCH request will update the information specified under body (url-encoded).
+    
